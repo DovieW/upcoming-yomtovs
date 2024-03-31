@@ -20,6 +20,7 @@ function YomTovCard({ yomTov }: {yomTov: YomTov}) {
       <Card.Content>
         <Title>{yomTov.title}</Title>
         <Text>{yomTov.date}</Text>
+        <Text>{generateDaysUntil(yomTov.date)}</Text>
         <Text>{yomTov.hebrew}</Text>
         <Text>{yomTov.category}</Text>
         <Paragraph>{yomTov.memo}</Paragraph>
@@ -42,6 +43,14 @@ function YomTovList({ yomTovs }: {yomTovs: YomTov[]}) {
       />
     </SafeAreaView>
   );
+}
+
+function generateDaysUntil(date: string): string {
+  const currentDate = new Date();
+  let targetDate = new Date(date);
+  const difference = targetDate.getTime() - currentDate.getTime();
+  const days = Math.ceil(difference / (1000 * 3600 * 24));
+  return `Days until: ${days}`;
 }
 
 function App() {
