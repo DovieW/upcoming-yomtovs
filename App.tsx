@@ -9,7 +9,7 @@ import {
 } from 'react-native-paper';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Linking, FlatList} from 'react-native';
+import {Linking, FlatList, Button} from 'react-native';
 
 interface YomTov {
   title: string;
@@ -31,11 +31,10 @@ function YomTovCard({yomTov}: {yomTov: YomTov}) {
         <Text>{yomTov.hebrew}</Text>
         <Text>{yomTov.category}</Text>
         <Paragraph>{yomTov.memo}</Paragraph>
-        <Text
+        <Button
           onPress={() => Linking.openURL(yomTov.link)}
-          style={{color: 'purple'}}>
-          More Info
-        </Text>
+          title="Learn More"
+        />
         <Text>{yomTov.location}</Text>
       </Card.Content>
     </Card>
