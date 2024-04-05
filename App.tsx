@@ -24,8 +24,10 @@ function YomTovCard({ yomTov }: {yomTov: YomTov}) {
         <Text>{yomTov.hebrew}</Text>
         <Text>{yomTov.category}</Text>
         <Paragraph>{yomTov.memo}</Paragraph>
-        <Text onPress={() => Linking.openURL(yomTov.link)} style={{ color: 'blue' }}>
-          {yomTov.link}
+        <Text
+          onPress={() => Linking.openURL(yomTov.link)}
+          style={{color: 'teal'}}>
+          Learn more
         </Text>
         <Text>{yomTov.location}</Text>
       </Card.Content>
