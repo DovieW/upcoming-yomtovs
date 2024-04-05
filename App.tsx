@@ -1,8 +1,15 @@
-import React, {useEffect, useState} from "react";
-import { Appbar, Card, Paragraph, Provider as PaperProvider, Text, Title } from 'react-native-paper';
-import {SafeAreaProvider, SafeAreaView} from "react-native-safe-area-context";
+import React, {useEffect, useState} from 'react';
+import {
+  Appbar,
+  Card,
+  Paragraph,
+  Provider as PaperProvider,
+  Text,
+  Title,
+} from 'react-native-paper';
+import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Linking, FlatList} from "react-native";
+import {Linking, FlatList} from 'react-native';
 
 interface YomTov {
   title: string;
@@ -14,9 +21,9 @@ interface YomTov {
   location: string;
 }
 
-function YomTovCard({ yomTov }: {yomTov: YomTov}) {
+function YomTovCard({yomTov}: {yomTov: YomTov}) {
   return (
-    <Card style={{ margin: 10 }}>
+    <Card style={{margin: 10}}>
       <Card.Content>
         <Title>{yomTov.title}</Title>
         <Text>{yomTov.date}</Text>
@@ -24,8 +31,10 @@ function YomTovCard({ yomTov }: {yomTov: YomTov}) {
         <Text>{yomTov.hebrew}</Text>
         <Text>{yomTov.category}</Text>
         <Paragraph>{yomTov.memo}</Paragraph>
-        <Text onPress={() => Linking.openURL(yomTov.link)} style={{ color: 'blue' }}>
-          {yomTov.link}
+        <Text
+          onPress={() => Linking.openURL(yomTov.link)}
+          style={{color: 'teal'}}>
+          Learn more
         </Text>
         <Text>{yomTov.location}</Text>
       </Card.Content>
@@ -33,12 +42,12 @@ function YomTovCard({ yomTov }: {yomTov: YomTov}) {
   );
 }
 
-function YomTovList({ yomTovs }: {yomTovs: YomTov[]}) {
+function YomTovList({yomTovs}: {yomTovs: YomTov[]}) {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{flex: 1}}>
       <FlatList
         data={yomTovs}
-        renderItem={({ item }) => <YomTovCard yomTov={item} />}
+        renderItem={({item}) => <YomTovCard yomTov={item} />}
         keyExtractor={(item, index) => index.toString()}
       />
     </SafeAreaView>
@@ -59,13 +68,15 @@ function App() {
   useEffect(() => {
     const date = new Date();
     const currentYear = date.getFullYear();
-    const currentMonth = (date.getMonth() + 1).toString().padStart(2, "0");
-    const currentDay = date.getDate().toString().padStart(2, "0");
+    const currentMonth = (date.getMonth() + 1).toString().padStart(2, '0');
+    const currentDay = date.getDate().toString().padStart(2, '0');
     const startDate = `${currentYear}-${currentMonth}-${currentDay}`;
     const endDate = `${currentYear + 1}-${currentMonth}-01`;
     (async () => {
       try {
-        const response = await fetch(`https://www.hebcal.com/hebcal?start=${startDate}&end=${endDate}&v=1&cfg=json&maj=on&min=on&mod=off&nx=on&month=x&ss=on&mf=on&c=off&s=off&D=off&d=off&o=off&F=off&myomi=off&leyning=off`);
+        const response = await fetch(
+          `https://www.hebcal.com/hebcal?start=${startDate}&end=${endDate}&v=1&cfg=json&maj=on&min=on&mod=off&nx=on&month=x&ss=on&mf=on&c=off&s=off&D=off&d=off&o=off&F=off&myomi=off&leyning=off`,
+        );
         const data = await response.json();
         setYomTovs(data.items);
         // await AsyncStorage.setItem('yomTovs', JSON.stringify(yomTovs));
