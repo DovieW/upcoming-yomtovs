@@ -1,4 +1,6 @@
 import React, {useEffect, useState} from 'react';
+import styles from './styles';
+
 import {
   Appbar,
   Card,
@@ -23,7 +25,7 @@ interface YomTov {
 
 function YomTovCard({yomTov}: {yomTov: YomTov}) {
   return (
-    <Card style={{margin: 10}}>
+    <Card style={styles.Card}>
       <Card.Content>
         <Title>{yomTov.title}</Title>
         <Text>{yomTov.date}</Text>
@@ -33,8 +35,8 @@ function YomTovCard({yomTov}: {yomTov: YomTov}) {
         <Paragraph>{yomTov.memo}</Paragraph>
         <Text
           onPress={() => Linking.openURL(yomTov.link)}
-          style={{color: 'blue'}}>
-          {yomTov.link}
+          style={styles.linkText}>
+          Learn more
         </Text>
         <Text>{yomTov.location}</Text>
       </Card.Content>
@@ -44,7 +46,7 @@ function YomTovCard({yomTov}: {yomTov: YomTov}) {
 
 function YomTovList({yomTovs}: {yomTovs: YomTov[]}) {
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={styles.List}>
       <FlatList
         data={yomTovs}
         renderItem={({item}) => <YomTovCard yomTov={item} />}
