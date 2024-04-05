@@ -42,8 +42,8 @@ function YomTovCard({yomTov}: {yomTov: YomTov}): JSX.Element {
         <Paragraph>{yomTov.memo}</Paragraph>
         <Text
           onPress={() => Linking.openURL(yomTov.link)}
-          style={{color: 'blue'}}>
-          {yomTov.link}
+          style={{color: 'purple'}}>
+          Click here for more information on {yomTov.title}
         </Text>
         <Text>{yomTov.location}</Text>
       </Card.Content>
@@ -111,11 +111,17 @@ function App() {
     })();
   }, []);
 
+  /**
+   * The main render method of the App component.
+   * It wraps the YomTovList component with necessary context providers and an AppBar.
+   * @returns {JSX.Element} The rendered component.
+   */
   return (
     <SafeAreaProvider>
       <PaperProvider>
         <Appbar.Header>
           <Appbar.Content title="Yom Tov Reminders" />
+          <Appbar.Action icon="dots-vertical" />
         </Appbar.Header>
         <YomTovList yomTovs={yomTovs} />
       </PaperProvider>
