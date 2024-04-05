@@ -11,9 +11,6 @@ import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Linking, FlatList} from 'react-native';
 
-/**
- * YomTov interface represents the structure of a Jewish holiday object.
- */
 interface YomTov {
   title: string;
   date: string;
@@ -24,26 +21,20 @@ interface YomTov {
   location: string;
 }
 
-/**
- * YomTovCard is a functional component that displays the details of a Jewish holiday.
- * @param {object} props - The properties passed to the component.
- * @param {YomTov} props.yomTov - The Jewish holiday object.
- * @returns {JSX.Element} The rendered component.
- */
-function YomTovCard({yomTov}: {yomTov: YomTov}): JSX.Element {
+function YomTovCard({yomTov}: {yomTov: YomTov}) {
   return (
     <Card style={{margin: 10}}>
       <Card.Content>
         <Title>{yomTov.title}</Title>
         <Text>{yomTov.date}</Text>
+        <Text>{generateDaysUntil(yomTov.date)}</Text>
         <Text>{yomTov.hebrew}</Text>
         <Text>{yomTov.category}</Text>
-        <Text>{generateDaysUntil(yomTov.date)}</Text>
         <Paragraph>{yomTov.memo}</Paragraph>
         <Text
           onPress={() => Linking.openURL(yomTov.link)}
           style={{color: 'purple'}}>
-          Click here for more information on {yomTov.title}
+          More Info
         </Text>
         <Text>{yomTov.location}</Text>
       </Card.Content>
@@ -51,13 +42,7 @@ function YomTovCard({yomTov}: {yomTov: YomTov}): JSX.Element {
   );
 }
 
-/**
- * YomTovList is a functional component that displays a list of Jewish holidays.
- * @param {object} props - The properties passed to the component.
- * @param {YomTov[]} props.yomTovs - The list of Jewish holiday objects.
- * @returns {JSX.Element} The rendered component.
- */
-function YomTovList({yomTovs}: {yomTovs: YomTov[]}): JSX.Element {
+function YomTovList({yomTovs}: {yomTovs: YomTov[]}) {
   return (
     <SafeAreaView style={{flex: 1}}>
       <FlatList
@@ -69,11 +54,6 @@ function YomTovList({yomTovs}: {yomTovs: YomTov[]}): JSX.Element {
   );
 }
 
-/**
- * generateDaysUntil calculates the number of days until a given date.
- * @param {string} date - The target date.
- * @returns {string} The number of days until the target date.
- */
 function generateDaysUntil(date: string): string {
   const currentDate = new Date();
   let targetDate = new Date(date);
@@ -82,11 +62,6 @@ function generateDaysUntil(date: string): string {
   return `Days until: ${days}`;
 }
 
-/**
- * App is the main functional component of the application.
- * It fetches data from an API, stores the data in its state, and displays a list of Jewish holidays.
- * @returns {JSX.Element} The rendered component.
- */
 function App() {
   const [yomTovs, setYomTovs] = useState<YomTov[]>([]);
 
@@ -111,17 +86,11 @@ function App() {
     })();
   }, []);
 
-  /**
-   * The main render method of the App component.
-   * It wraps the YomTovList component with necessary context providers and an AppBar.
-   * @returns {JSX.Element} The rendered component.
-   */
   return (
     <SafeAreaProvider>
       <PaperProvider>
         <Appbar.Header>
           <Appbar.Content title="Yom Tov Reminders" />
-          <Appbar.Action icon="dots-vertical" />
         </Appbar.Header>
         <YomTovList yomTovs={yomTovs} />
       </PaperProvider>
