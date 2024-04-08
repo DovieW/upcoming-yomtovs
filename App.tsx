@@ -9,9 +9,9 @@ import {
   Text,
   Title,
 } from 'react-native-paper';
+
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Linking, FlatList} from 'react-native';
+import {FlatList, Linking} from 'react-native';
 
 interface YomTov {
   title: string;
@@ -28,7 +28,10 @@ function YomTovCard({yomTov}: {yomTov: YomTov}) {
     <Card style={styles.Card}>
       <Card.Content>
         <Title>{yomTov.title}</Title>
-        <Text>{yomTov.date}</Text>
+        <Text>
+          {generateDayOfWeek(yomTov.date)}
+          {' ' + yomTov.date}
+        </Text>
         <Text>{generateDaysUntil(yomTov.date)}</Text>
         <Text>{yomTov.hebrew}</Text>
         <Text>{yomTov.category}</Text>
@@ -54,6 +57,20 @@ function YomTovList({yomTovs}: {yomTovs: YomTov[]}) {
       />
     </SafeAreaView>
   );
+}
+
+function generateDayOfWeek(date: string) {
+  const days = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
+  const dateObj = new Date(date).getDay();
+  return days[dateObj];
 }
 
 function generateDaysUntil(date: string): string {
