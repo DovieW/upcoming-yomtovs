@@ -27,7 +27,7 @@ function YomTovCard({yomTov}: {yomTov: YomTov}) {
       <Card.Content>
         <Title>{yomTov.title}</Title>
         <Text>
-          {yomTov.date + ' '}
+          {yomTov.date + ' - '}
           {generateDayOfWeek(yomTov.date)}
         </Text>
         <Text>{generateDaysUntil(yomTov.date)}</Text>
