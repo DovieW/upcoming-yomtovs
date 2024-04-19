@@ -74,7 +74,7 @@ function generateDayOfWeek(date: string) {
     'Friday',
     'Saturday',
   ];
-  const dateObj = new Date(date).getDay();
+  const dateObj = new Date(date).getDay() + 1;
   return days[dateObj];
 }
 
