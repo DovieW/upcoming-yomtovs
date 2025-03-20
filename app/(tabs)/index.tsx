@@ -27,8 +27,7 @@ export default function Home() {
           "yyyy-MM-dd"
         );
 
-        // Build Hebcal API URL; adjust parameters as needed.
-        const url = `https://www.hebcal.com/hebcal/?v=1&cfg=json&start=${startDate}&end=${endDate}&maj=on&min=on&mod=on&nx=on`;
+        const url = `https://www.hebcal.com/hebcal/?v=1&cfg=json&start=${startDate}&end=${endDate}&maj=on&min=on&mod=on&nx=on&mf=on&ss=on&mod=off&s=off&leyning=off&ykk=on`;
         const response = await fetch(url);
         const data = await response.json();
 
