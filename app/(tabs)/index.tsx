@@ -83,18 +83,28 @@ export default function Home() {
   // Otherwise, show "In X days" or "Today"/"Tomorrow".
   const getTimeDifference = (dateString: string): string => {
     const eventDate = new Date(dateString);
-    const months = differenceInCalendarMonths(eventDate, currentDate);
-    if (months >= 1) {
-      // Subtract the months from eventDate to get remaining days
-      const adjustedDate = addMonths(currentDate, months);
-      const days = differenceInDays(eventDate, adjustedDate);
-      return `In ${months} month${months !== 1 ? "s" : ""}${
-        days > 0
-          ? `, ${days} day${days !== 1 ? "s" : ""}`
-          : ""
-      }`;
+  
+    let months = differenceInCalendarMonths(eventDate, currentDate);
+  
+    if (months > 0) {
+      let adjustedDate = addMonths(currentDate, months);
+      let days = differenceInDays(eventDate, adjustedDate);
+
+      if (days < 0) {
+        months -= 1;
+        adjustedDate = addMonths(currentDate, months);
+        days = differenceInDays(eventDate, adjustedDate);
+      }
+  
+      if (months > 0) {
+        let result = `In ${months} month${months !== 1 ? "s" : ""}`;
+        if (days > 0) {
+          result += `, ${days} day${days !== 1 ? "s" : ""}`;
+        }
+        return result;
+      }
     }
-    // Otherwise do the day-based approach:
+  
     const days = differenceInDays(eventDate, currentDate);
     if (days === 0) return "Today";
     if (days === 1) return "Tomorrow";
