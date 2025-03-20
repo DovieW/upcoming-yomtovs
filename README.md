@@ -16,10 +16,11 @@
 2. Dev Server
 
    ```bash
-   npx expo start
+   npx expo start # Connect over Wifi
    ```
-3. Production Build
+3. Build
    
    ```bash
+   eas build --platform android --profile development # For testing without using server. Download APK from Expo builds dashboard
    eas build --platform android
    ```
