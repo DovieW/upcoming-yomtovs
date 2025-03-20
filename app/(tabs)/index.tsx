@@ -1,43 +1,72 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, ScrollView, ActivityIndicator } from "react-native";
-import { Card, Title, Paragraph, Button, Chip, useTheme } from "react-native-paper";
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
+import {
+  Card,
+  Title,
+  Paragraph,
+  Chip,
+  useTheme,
+  IconButton,
+  Dialog,
+  Portal,
+  Button,
+} from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { differenceInDays, format } from "date-fns";
+import {
+  format,
+  differenceInDays,
+  addMonths,
+  differenceInCalendarMonths,
+} from "date-fns";
 
 type HolidayEvent = {
   title: string;
   date: string;
   hebrew: string;
   category: string;
+  memo?: string; // Hebcal's "memo" property
 };
 
 export default function Home() {
   const theme = useTheme();
   const [holidays, setHolidays] = useState<HolidayEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedMemo, setSelectedMemo] = useState<string>("");
+  const [dialogVisible, setDialogVisible] = useState<boolean>(false);
+
   const currentDate = new Date();
 
   useEffect(() => {
     const fetchHolidays = async () => {
       try {
-        // Calculate today's date and one year from today in yyyy-MM-dd format
         const startDate = format(currentDate, "yyyy-MM-dd");
         const endDate = format(
-          new Date(currentDate.getFullYear() + 1, currentDate.getMonth(), currentDate.getDate()),
+          new Date(
+            currentDate.getFullYear() + 1,
+            currentDate.getMonth(),
+            currentDate.getDate()
+          ),
           "yyyy-MM-dd"
         );
 
-        const url = `https://www.hebcal.com/hebcal/?v=1&cfg=json&start=${startDate}&end=${endDate}&maj=on&min=on&mod=on&nx=on&mf=on&ss=on&mod=off&s=off&leyning=off&ykk=on`;
+        const url = `https://www.hebcal.com/hebcal/?v=1&cfg=json&start=${startDate}&end=${endDate}&maj=on&min=on&mod=on&nx=on&mf=on&ss=on&ykk=on&leyning=off`;
         const response = await fetch(url);
         const data = await response.json();
 
-        // The API returns an items array. Filter for events with category "holiday". 
-        const holidayItems: HolidayEvent[] = data.items.filter((item: HolidayEvent) => {
-          return item.category === "holiday";
-        });
+        // Filter for events with category="holiday"
+        const holidayItems: HolidayEvent[] = data.items.filter(
+          (item: HolidayEvent) => item.category === "holiday"
+        );
 
-        // Optionally sort events by date ascending.
-        holidayItems.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+        // Sort by ascending date
+        holidayItems.sort(
+          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+        );
 
         setHolidays(holidayItems);
       } catch (error) {
@@ -50,18 +79,43 @@ export default function Home() {
     fetchHolidays();
   }, [currentDate]);
 
-  // Given a holiday's date, compute how many days away it is.
-  const getDaysDifference = (dateString: string): string => {
+  // If the difference is more than one calendar month, say "In X months, Y days"
+  // Otherwise, show "In X days" or "Today"/"Tomorrow".
+  const getTimeDifference = (dateString: string): string => {
     const eventDate = new Date(dateString);
+    const months = differenceInCalendarMonths(eventDate, currentDate);
+    if (months >= 1) {
+      // Subtract the months from eventDate to get remaining days
+      const adjustedDate = addMonths(currentDate, months);
+      const days = differenceInDays(eventDate, adjustedDate);
+      return `In ${months} month${months !== 1 ? "s" : ""}${
+        days > 0
+          ? `, ${days} day${days !== 1 ? "s" : ""}`
+          : ""
+      }`;
+    }
+    // Otherwise do the day-based approach:
     const days = differenceInDays(eventDate, currentDate);
     if (days === 0) return "Today";
     if (days === 1) return "Tomorrow";
-    return `In ${days} days`;
+    return `In ${days} day${days !== 1 ? "s" : ""}`;
+  };
+
+  const openMemoDialog = (memo?: string) => {
+    setSelectedMemo(memo || "");
+    setDialogVisible(true);
+  };
+
+  const hideMemoDialog = () => {
+    setDialogVisible(false);
+    setSelectedMemo("");
   };
 
   if (loading) {
     return (
-      <SafeAreaView style={[styles.loaderContainer, { backgroundColor: theme.colors.background }]}>
+      <SafeAreaView
+        style={[styles.loaderContainer, { backgroundColor: theme.colors.background }]}
+      >
         <ActivityIndicator size="large" color={theme.colors.primary} />
       </SafeAreaView>
     );
@@ -70,10 +124,10 @@ export default function Home() {
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]}>
       <ScrollView style={styles.container}>
-        <Title style={styles.mainTitle}>Upcoming Yomtovs</Title>
+        <Title style={styles.mainTitle}>Upcoming YomTovs</Title>
         {holidays.map((holiday, index) => {
           const eventDate = new Date(holiday.date);
-          const daysDifference = getDaysDifference(holiday.date);
+          const timeDifference = getTimeDifference(holiday.date);
           return (
             <Card key={index} style={styles.card}>
               <Card.Content>
@@ -87,24 +141,41 @@ export default function Home() {
                       styles.chip,
                       {
                         backgroundColor:
-                          daysDifference === "Today"
+                          timeDifference === "Today"
                             ? theme.colors.primary
                             : theme.colors.secondaryContainer,
                       },
                     ]}
                   >
-                    {daysDifference}
+                    {timeDifference}
                   </Chip>
                 </View>
                 <Paragraph style={styles.hebrewDate}>{holiday.hebrew}</Paragraph>
               </Card.Content>
-              <Card.Actions>
-                <Button mode="contained-tonal">Details</Button>
+              <Card.Actions style={{ justifyContent: "flex-end" }}>
+                <IconButton
+                  icon="information-outline"
+                  onPress={() => openMemoDialog(holiday.memo)}
+                  containerColor="transparent"
+                  mode="contained-tonal"
+                  size={24}
+                />
               </Card.Actions>
             </Card>
           );
         })}
       </ScrollView>
+      <Portal>
+        <Dialog visible={dialogVisible} onDismiss={hideMemoDialog}>
+          <Dialog.Title>YomTov Details</Dialog.Title>
+          <Dialog.Content>
+            <Paragraph>{selectedMemo || "No details available."}</Paragraph>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={hideMemoDialog}>OK</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </SafeAreaView>
   );
 }
