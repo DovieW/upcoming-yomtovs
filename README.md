@@ -6,11 +6,12 @@
 
 ### Development
 
-1. Install dependencies
+1. Setup
 
    ```bash
    npm install -g eas-cli
    npm install
+   eas login
    ```
 
 2. Dev Server
@@ -21,7 +22,12 @@
 3. Build
    
    ```bash
-   eas build --platform android --profile development # For testing without using server. Download APK from Expo builds dashboard
-   eas build --platform android
+   eas build --platform android --profile development # Creates a large APK file which is meant for connecting to the dev server (started by above command).
+   eas build --platform android --profile preview # Build working simple APK on Expo server. Add --local to build locally but you'll need more dependencies.
+   eas build --platform android # Build production version of app as an APK file. This can afterwards be submitted to Play Store using the `eas submit` command (see below).
    ```
+4. Submit to app store
    
+   ```bash
+   eas submit --platform android
+   ```
