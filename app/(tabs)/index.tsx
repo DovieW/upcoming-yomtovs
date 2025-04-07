@@ -54,7 +54,7 @@ export default function Home() {
           "yyyy-MM-dd"
         );
 
-        const url = `https://www.hebcal.com/hebcal/?v=1&cfg=json&start=${startDate}&end=${endDate}&maj=on&min=on&mod=on&nx=on&mf=on&ss=on&ykk=on&leyning=off`;
+        const url = `https://www.hebcal.com/hebcal/?v=1&cfg=json&start=${startDate}&end=${endDate}&maj=on&min=on&mod=off&nx=on&mf=on&ss=on&ykk=on&leyning=off`;
         const response = await fetch(url);
         const data = await response.json();
 
