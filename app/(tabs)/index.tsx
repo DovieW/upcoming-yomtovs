@@ -106,6 +106,7 @@ export default function Home() {
     }
   
     const days = differenceInDays(eventDate, currentDate);
+    if (days < 0) return "Passed";
     if (days === 0) return "Today";
     if (days === 1) return "Tomorrow";
     return `In ${days} day${days !== 1 ? "s" : ""}`;
