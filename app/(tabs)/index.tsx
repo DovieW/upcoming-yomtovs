@@ -22,6 +22,7 @@ import {
   differenceInDays,
   addMonths,
   differenceInCalendarMonths,
+  formatDate,
 } from "date-fns";
 
 type HolidayEvent = {
@@ -39,20 +40,13 @@ export default function Home() {
   const [selectedMemo, setSelectedMemo] = useState<string>("");
   const [dialogVisible, setDialogVisible] = useState<boolean>(false);
 
-  const currentDate = new Date();
+  const currentDate = format(new Date(), "yyyy-MM-dd");
 
   useEffect(() => {
     const fetchHolidays = async () => {
       try {
-        const startDate = format(currentDate, "yyyy-MM-dd");
-        const endDate = format(
-          new Date(
-            currentDate.getFullYear() + 1,
-            currentDate.getMonth(),
-            currentDate.getDate()
-          ),
-          "yyyy-MM-dd"
-        );
+        const startDate = currentDate;
+        const endDate = format(addMonths(new Date(currentDate), 12), "yyyy-MM-dd");
 
         const url = `https://www.hebcal.com/hebcal/?v=1&cfg=json&start=${startDate}&end=${endDate}&maj=on&min=on&mod=off&nx=on&mf=on&ss=on&ykk=on&leyning=off`;
         const response = await fetch(url);
@@ -78,37 +72,21 @@ export default function Home() {
 
     fetchHolidays();
   }, [currentDate]);
-
-  // If the difference is more than one calendar month, say "In X months, Y days"
-  // Otherwise, show "In X days" or "Today"/"Tomorrow".
+  
   const getTimeDifference = (dateString: string): string => {
     const eventDate = new Date(dateString);
-  
-    let months = differenceInCalendarMonths(eventDate, currentDate);
-  
-    if (months > 0) {
-      let adjustedDate = addMonths(currentDate, months);
-      let days = differenceInDays(eventDate, adjustedDate);
-
-      if (days < 0) {
-        months -= 1;
-        adjustedDate = addMonths(currentDate, months);
-        days = differenceInDays(eventDate, adjustedDate);
-      }
-  
-      if (months > 0) {
-        let result = `In ${months} month${months !== 1 ? "s" : ""}`;
-        if (days > 0) {
-          result += `, ${days} day${days !== 1 ? "s" : ""}`;
-        }
-        return result;
-      }
-    }
-  
     const days = differenceInDays(eventDate, currentDate);
+    const months = differenceInCalendarMonths(eventDate, currentDate);
+
     if (days < 0) return "Passed";
     if (days === 0) return "Today";
     if (days === 1) return "Tomorrow";
+
+    if (months > 0) {
+      const adjustedDays = differenceInDays(eventDate, addMonths(currentDate, months));
+      return `In ${months} month${months !== 1 ? "s" : ""}${adjustedDays > 0 ? `, ${adjustedDays} day${adjustedDays !== 1 ? "s" : ""}` : ""}`;
+    }
+
     return `In ${days} day${days !== 1 ? "s" : ""}`;
   };
 
