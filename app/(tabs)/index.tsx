@@ -57,12 +57,8 @@ export default function Home() {
           (item: HolidayEvent) => item.category === "holiday"
         );
 
-        // Sort by ascending date
-        holidayItems.sort(
-          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-        );
 
-        setHolidays(holidayItems);
+        setHolidays(holidayItems.slice(0, 30));
       } catch (error) {
         console.error("Error fetching holidays:", error);
       } finally {
