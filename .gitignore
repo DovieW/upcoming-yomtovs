@@ -39,3 +39,4 @@ app-example
 
 # Custom
 service-account-file.json
+capacitor.config.ts
