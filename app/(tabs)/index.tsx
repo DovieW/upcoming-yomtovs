@@ -57,8 +57,33 @@ export default function Home() {
           (item: HolidayEvent) => item.category === "holiday"
         );
 
+        // Consolidate multi-day holidays
+        const consolidatedHolidays: HolidayEvent[] = [];
+        let currentHoliday: HolidayEvent | null = null;
 
-        setHolidays(holidayItems.slice(0, 30));
+        for (const item of holidayItems) {
+          if (currentHoliday && item.title.startsWith(currentHoliday.title)) {
+            if (!currentHoliday.memo?.includes("(multi-day)")) {
+              currentHoliday.memo = currentHoliday.memo ? `${currentHoliday.memo} (multi-day)` : "(multi-day)";
+            }
+          } else {
+            if (currentHoliday) {
+              consolidatedHolidays.push(currentHoliday);
+            }
+            currentHoliday = { ...item };
+            const multiDayRoots = ["Pesach", "Sukkot", "Rosh Hashana", "Shavuot", "Chanukah"];
+            if (multiDayRoots.some(root => item.title.startsWith(root) && !item.title.includes("Chol ha-Moed") && !item.title.includes("Intermediate Days"))) {
+              currentHoliday.memo = currentHoliday.memo
+                ? `${currentHoliday.memo} (multi-day holiday)`
+                : "(multi-day holiday)";
+            }
+          }
+        }
+        if (currentHoliday) {
+          consolidatedHolidays.push(currentHoliday);
+        }
+
+        setHolidays(consolidatedHolidays.slice(0, 30));
       } catch (error) {
         console.error("Error fetching holidays:", error);
       } finally {
