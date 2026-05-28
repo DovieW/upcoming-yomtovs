@@ -132,7 +132,9 @@ export default function Home() {
         const response = await fetch(buildHolidayUrl(monthsAhead));
 
         if (!response.ok) {
-          throw new Error("Unable to reach Hebcal right now.");
+          throw new Error(
+            `Unable to reach Hebcal right now (${response.status} ${response.statusText}).`
+          );
         }
 
         const data = await response.json();
@@ -176,8 +178,10 @@ export default function Home() {
 
     return holidays.filter((holiday) =>
       [holiday.title, holiday.hebrew, holiday.memo]
-        .filter((value): value is string => Boolean(value))
-        .some((value) => value.toLowerCase().includes(normalizedQuery))
+        .filter((value): value is string => value !== undefined && value !== null)
+        .join(" ")
+        .toLowerCase()
+        .includes(normalizedQuery)
     );
   }, [holidays, searchQuery]);
 

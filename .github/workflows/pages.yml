@@ -43,8 +43,9 @@ jobs:
         run: npm run build:web
 
       - name: Add GitHub Pages fallback
-        # GitHub Pages serves 404.html for unknown routes, so this keeps Expo Router
-        # deep links working when a direct page request misses a generated file.
+        # This common SPA fallback lets GitHub Pages serve the app shell from 404.html
+        # so Expo Router deep links still work when a direct request misses a file.
+        # Keep Pages configured to use GitHub Actions as the repository source.
         run: cp dist/index.html dist/404.html
 
       - name: Upload Pages artifact
