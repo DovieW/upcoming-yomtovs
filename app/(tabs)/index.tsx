@@ -18,6 +18,7 @@ import {
   differenceInCalendarDays,
   differenceInCalendarMonths,
   format,
+  parseISO,
   startOfDay,
 } from "date-fns";
 
@@ -86,7 +87,7 @@ const consolidateHolidays = (items: HolidayEvent[]) => {
 
 const getTimeDifference = (dateString: string): string => {
   const today = startOfDay(new Date());
-  const parsedEventDate = new Date(dateString);
+  const parsedEventDate = parseISO(dateString);
 
   if (Number.isNaN(parsedEventDate.getTime())) {
     return "Date unavailable";
@@ -210,8 +211,11 @@ export default function Home() {
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]}>
       <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.contentContainer}
+        style={[styles.scrollView, { backgroundColor: theme.colors.background }]}
+        contentContainerStyle={[
+          styles.contentContainer,
+          { backgroundColor: theme.colors.background },
+        ]}
         keyboardShouldPersistTaps="handled"
       >
         <Surface style={styles.heroCard} elevation={1}>
@@ -309,7 +313,7 @@ export default function Home() {
         ) : null}
 
         {filteredHolidays.map((holiday, index) => {
-          const eventDate = new Date(holiday.date);
+          const eventDate = parseISO(holiday.date);
           const timeDifference = getTimeDifference(holiday.date);
 
           return (

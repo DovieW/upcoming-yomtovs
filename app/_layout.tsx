@@ -24,6 +24,27 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
+  useEffect(() => {
+    if (typeof document === 'undefined') {
+      return;
+    }
+
+    const pageBackground = theme.colors.background;
+    const pageForeground = theme.colors.onBackground;
+
+    document.documentElement.style.backgroundColor = pageBackground;
+    document.documentElement.style.colorScheme = theme.dark ? 'dark' : 'light';
+    document.body.style.backgroundColor = pageBackground;
+    document.body.style.color = pageForeground;
+
+    const root = document.getElementById('root');
+
+    if (root) {
+      root.style.backgroundColor = pageBackground;
+      root.style.color = pageForeground;
+    }
+  }, [theme]);
+
   if (!loaded) {
     return null;
   }
