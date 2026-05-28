@@ -18,7 +18,6 @@ import {
   differenceInCalendarDays,
   differenceInCalendarMonths,
   format,
-  parseISO,
   startOfDay,
 } from "date-fns";
 
@@ -87,7 +86,13 @@ const consolidateHolidays = (items: HolidayEvent[]) => {
 
 const getTimeDifference = (dateString: string): string => {
   const today = startOfDay(new Date());
-  const eventDate = startOfDay(parseISO(dateString));
+  const parsedEventDate = new Date(dateString);
+
+  if (Number.isNaN(parsedEventDate.getTime())) {
+    return "Date unavailable";
+  }
+
+  const eventDate = startOfDay(parsedEventDate);
   const days = differenceInCalendarDays(eventDate, today);
   const months = differenceInCalendarMonths(eventDate, today);
 
@@ -146,7 +151,11 @@ export default function Home() {
         setLastUpdated(new Date());
       } catch (fetchError) {
         console.error("Error fetching holidays:", fetchError);
-        setError("Couldn't load the latest YomTov data. Please try again.");
+        setError(
+          fetchError instanceof Error
+            ? fetchError.message
+            : "Couldn't load the latest YomTov data. Please try again."
+        );
       } finally {
         setLoading(false);
         setRefreshing(false);

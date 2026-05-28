@@ -46,7 +46,9 @@ jobs:
         # This common SPA fallback lets GitHub Pages serve the app shell from 404.html
         # so Expo Router deep links still work when a direct request misses a file.
         # Keep Pages configured to use GitHub Actions as the repository source.
-        run: cp dist/index.html dist/404.html
+        run: |
+          test -f dist/index.html
+          cp dist/index.html dist/404.html
 
       - name: Upload Pages artifact
         if: github.event_name != 'pull_request'
