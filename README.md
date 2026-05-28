@@ -55,6 +55,6 @@ The workflow at `.github/workflows/pages.yml` will:
 1. install dependencies
 2. lint and test the app
 3. export the static site
-4. deploy `dist/` to GitHub Pages on pushes to `main`
+4. deploy `dist/` to GitHub Pages on pushes to `master`
 
 In GitHub repository settings, make sure **Pages** is set to **GitHub Actions** as the source.
