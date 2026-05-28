@@ -18,6 +18,8 @@ import {
   differenceInCalendarDays,
   differenceInCalendarMonths,
   format,
+  parseISO,
+  startOfDay,
 } from "date-fns";
 
 type HolidayEvent = {
@@ -84,17 +86,17 @@ const consolidateHolidays = (items: HolidayEvent[]) => {
 };
 
 const getTimeDifference = (dateString: string): string => {
-  const now = new Date();
-  const eventDate = new Date(dateString);
-  const days = differenceInCalendarDays(eventDate, now);
-  const months = differenceInCalendarMonths(eventDate, now);
+  const today = startOfDay(new Date());
+  const eventDate = startOfDay(parseISO(dateString));
+  const days = differenceInCalendarDays(eventDate, today);
+  const months = differenceInCalendarMonths(eventDate, today);
 
   if (days < 0) return "Passed";
   if (days === 0) return "Today";
   if (days === 1) return "Tomorrow";
 
   if (months > 0) {
-    const adjustedDays = differenceInCalendarDays(eventDate, addMonths(now, months));
+    const adjustedDays = differenceInCalendarDays(eventDate, addMonths(today, months));
 
     return `In ${months} month${months !== 1 ? "s" : ""}${
       adjustedDays > 0 ? `, ${adjustedDays} day${adjustedDays !== 1 ? "s" : ""}` : ""
@@ -174,8 +176,8 @@ export default function Home() {
 
     return holidays.filter((holiday) =>
       [holiday.title, holiday.hebrew, holiday.memo]
-        .filter(Boolean)
-        .some((value) => value!.toLowerCase().includes(normalizedQuery))
+        .filter((value): value is string => Boolean(value))
+        .some((value) => value.toLowerCase().includes(normalizedQuery))
     );
   }, [holidays, searchQuery]);
 

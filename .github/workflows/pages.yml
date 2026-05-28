@@ -13,7 +13,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -43,6 +43,8 @@ jobs:
         run: npm run build:web
 
       - name: Add GitHub Pages fallback
+        # GitHub Pages serves 404.html for unknown routes, so this keeps Expo Router
+        # deep links working when a direct page request misses a generated file.
         run: cp dist/index.html dist/404.html
 
       - name: Upload Pages artifact

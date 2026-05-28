@@ -50,7 +50,7 @@ To build the Pages version locally:
 npm run build:web
 ```
 
-The workflow at `/tmp/workspace/DovieW/upcoming-yomtovs/.github/workflows/pages.yml` will:
+The workflow at `.github/workflows/pages.yml` will:
 
 1. install dependencies
 2. lint and test the app
