@@ -222,11 +222,6 @@ export default function Home() {
           </Card>
         ) : null}
 
-        <View style={styles.sectionHeader}>
-          <Title style={styles.sectionTitle}>Holiday list</Title>
-          <Paragraph>{filteredHolidays.length} matches</Paragraph>
-        </View>
-
         {filteredHolidays.length === 0 ? (
           <Card style={styles.statusCard}>
             <Card.Content>
@@ -251,7 +246,7 @@ export default function Home() {
                   <Paragraph style={styles.date}>
                     {format(eventDate, "EEEE, MMMM d, yyyy")}
                   </Paragraph>
-                  <Chip
+                  <View
                     style={[
                       styles.chip,
                       {
@@ -261,15 +256,21 @@ export default function Home() {
                             : theme.colors.secondaryContainer,
                       },
                     ]}
-                    textStyle={{
-                      color:
-                        timeDifference === "Today"
-                          ? theme.colors.onPrimary
-                          : theme.colors.onSecondaryContainer,
-                    }}
                   >
-                    {timeDifference}
-                  </Chip>
+                    <Paragraph
+                      style={[
+                        styles.chipLabel,
+                        {
+                          color:
+                            timeDifference === "Today"
+                              ? theme.colors.onPrimary
+                              : theme.colors.onSecondaryContainer,
+                        },
+                      ]}
+                    >
+                      {timeDifference}
+                    </Paragraph>
+                  </View>
                 </View>
                 <Paragraph style={styles.hebrewDate}>{holiday.hebrew}</Paragraph>
                 {holiday.memo ? (
@@ -342,16 +343,6 @@ const styles = StyleSheet.create({
   searchbar: {
     marginBottom: 16,
   },
-  sectionHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
-    gap: 12,
-  },
-  sectionTitle: {
-    fontSize: 22,
-  },
   statusCard: {
     marginBottom: 16,
     borderRadius: 20,
@@ -383,6 +374,13 @@ const styles = StyleSheet.create({
   },
   chip: {
     marginLeft: "auto",
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  chipLabel: {
+    fontSize: 16,
+    fontWeight: "600",
   },
   cardActions: {
     justifyContent: "flex-end",
